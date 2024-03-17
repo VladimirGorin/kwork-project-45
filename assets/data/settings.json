@@ -1,0 +1,19 @@
+{
+	"groupId": "-1002142902440",
+	"subChannels": [],
+	"subText": "Для отправки сообщений подпишитесь на канал проекта https://t.me/granic_net 🏐",
+	"sheetSettings": {
+		"sheetId": "1-IskY89YULoXtpOjOiOkCVxZrNZUgJcmfGphgXSW28Q"
+	},
+	"banWords": true,
+	"forwardMessages": true,
+	"spoilerMessages": true,
+	"mentionMessages": true,
+	"urlMessages": true,
+	"customEmojiMessages": false,
+	"minLen": 15,
+	"time": 180,
+	"newsletter": true,
+	"phoneMessages": true,
+	"subMessage": true
+}

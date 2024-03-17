@@ -1,0 +1,26 @@
+{
+  "name": "telegram-bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "NODE_ENV=development nodemon index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "apparatus": "^0.0.10",
+    "dotenv": "^16.3.1",
+    "google-spreadsheet": "^2.0.6",
+    "googleapis": "^129.0.0",
+    "languagedetect": "^2.0.0",
+    "natural": "^6.10.4",
+    "node-cron": "^3.0.3",
+    "node-telegram-bot-api": "^0.64.0",
+    "nodemon": "^3.0.1",
+    "string-similarity": "^4.0.4",
+    "winston": "^3.11.0"
+  }
+}

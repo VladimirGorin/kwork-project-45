@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "the-tendril-409714",
+  "private_key_id": "970a97e08f1ca296ee007957a42db38616f25b05",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQCsChLJgzkzoWax\n7j9V2eL+3fE4+UitTSeJyNdcNOn35bl8gpoyiSJb+9UpkvcyAF/bPFQZQUkyTO12\nt3DOYyBoeCZWfO1s2tz64ZPnPxSuTh53ST62wI0L2jWEhYlHKy7+sFYVqE9v8BT/\nXYcAFj8vnvvxPV8IzUgadf6CzLwynCcbaJhtq7mxGBdO0Hfo4ID1RPHfkyMdUDWD\noUW5fT/2LQgbVvxQpexHPVpon4Ck9/814WxjRgkVP+P+sxb8H4PZKEBufXSiaDg1\nEaWE7J3++IYy267lcGs1iFIR7B0erueSXcimUeKGQ1m7B0SHHdkETyVU/hwRgaQ2\niHWzjb6ZAgMBAAECggEAECpKJaEs6MsLqUBntxtoFuan2eCikZYkVvAGPGXEbkSp\nrydecc0s61O4bdWfYJVkbGc4x764r/9GeNc3xEzQKMDRaWMHtCjEhtZXXW0x9kbk\n2fSJ7gYdurVgPfmGMqe+HLRZAmP0QuJeNriFDN8KROE9byeDHIKdec8IgSXXsTGP\nS0zcbFWr5/PWgRAy55Rgz9E5mYl/wWW8avJZo6uI9+lvDifWYTSt9tswxpSjmqGz\nsCiHd3tN/8d2LxgSHqejreIlQXaZEMJ19aMT8/4F0mhtkfZ+r+yBs5YsIAJeEXmY\nU9/i8GAsiG/Hm8bThWXDlvsx8JULmmWz/RDs3snm2QKBgQDsXx+h5evf6k737+8t\n5w1U2R3Z9JRStT05uY6S3/WNoTTn/YVipkSm+IAz0gq0LO0FDRWxKgmh6DGX+O61\n1yGNdxuh7x1VwQJw9h44lfiGXgxKwFAvdLhQ1ZqxQOJJf5+8i1Eh0BNp0MQgKTAl\nKyp93t3loscaJTwaJTzMR8OT3wKBgQC6U1naS3dW1yz1mE2gfGimEuwV5Ax6pd8G\nvGfQSCVPlHl1BgCjLwiXOT1ft7Jj53wKIPilBhIFb9fBkJtWzfNOXns8fLiQUL82\nEpeRjizN3LFeBOAce0/bLnZ+uFL9cwHKRSYkn2fsK6GlApC6lFoUsUH8HAQdog2R\nROPRV428hwKBgQCe0+hIfFt7sVDwzxuTZ48QtXeWjf7geII0eJfx32V7jpgjTrpD\nKGA3JgHXUEr6+LknTLyHuCySy5gPeyjDrVQRX7iEnkzC45eFWgvCkBtYBngR/pmi\n2bZEMtPoSSYEpyopoh+ZLdztnGc9CRAd2ZyKyaem9zL8QYraMq1gwtQLVwKBgQC4\nTGm7+pl4VC4sXxGphGUen+jVXlTZm+gWiZVF95awOHRKxD0tLACbVArY+qKBHx8a\nBbLryC1bI12OILMGEYBwLBRJqDQGy1fW7FzvpGm81ma6UKg8g9xhOHwMq9WqzG8g\n23T3FJV+jUm+JeNyKftQLGTQMgYAKaKx5ipRjwCrUQKBgQCiW6mWc7E/EdEDOjKG\nHogBY5GKHJDO/0kjfP4q+oQr0OusTis4ZRThvn/y5bzzphWOho1OjHXv15n+PcJR\nKm4Tu4B8Ibs60QEhShsmrU0zJdMvnkZh5Bjav0HyrZL0X6V1f407XourjmDW9bjl\nz1NBwze+N6PxpFmsReemkXmiLg==\n-----END PRIVATE KEY-----\n",
+  "client_email": "telegram-moderator-bot@the-tendril-409714.iam.gserviceaccount.com",
+  "client_id": "118213951894637899216",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/telegram-moderator-bot%40the-tendril-409714.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
