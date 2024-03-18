@@ -930,7 +930,7 @@ try {
     const findGroup = groups.find((item) => Number(item.id) === groupId);
     const currentTime = new Date();
 
-    const getMentionUser = command.match(/@[\w-]+/)[0].replace("@", "")
+    const getMentionUser = command.match(/@[\w-]+/)?.[0]?.replace("@", "")
     const isMentionUserAdmin = await getAdminByUsername(getMentionUser, groupId)
 
     const query = msg?.data;
