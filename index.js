@@ -14,6 +14,7 @@ const adminChatId = Number(
 let temp = {
   groups: [],
   handleFunction: null,
+  eflood: false
 };
 
 const googleSheetsCredentials = require("./assets/data/the-tendril-409714-970a97e08f1c.json");
@@ -270,7 +271,7 @@ try {
         if (command) {
           switch (command) {
             case "/stop":
-              if(testMode){
+              if (testMode) {
 
                 bot.sendMessage(user.id, "Успешно остоновлено")
                 exec(`pm2 stop test`, (error, stdout, stderr) => {
@@ -316,42 +317,37 @@ try {
                           callback_data: `urlMessages`,
                         },
                         {
-                          text: `Рассылка ${
-                            settings?.newsletter ? "✅" : "🚫"
-                          }`,
+                          text: `Рассылка ${settings?.newsletter ? "✅" : "🚫"
+                            }`,
                           callback_data: `newsletter`,
                         },
                       ],
                       [
                         {
-                          text: `Скрытые сообщения ${
-                            settings?.spoilerMessages ? "✅" : "🚫"
-                          }`,
+                          text: `Скрытые сообщения ${settings?.spoilerMessages ? "✅" : "🚫"
+                            }`,
                           callback_data: `spoilerMessages`,
                         },
                       ],
                       [
                         {
-                          text: `Номера телефонов ${
-                            settings?.phoneMessages ? "✅" : "🚫"
-                          }`,
+                          text: `Номера телефонов ${settings?.phoneMessages ? "✅" : "🚫"
+                            }`,
                           callback_data: `phoneMessages`,
                         },
                       ],
 
                       [
                         {
-                          text: `Пересланные сообщения ${
-                            settings?.forwardMessages ? "✅" : "🚫"
-                          }`,
+                          text: `Пересланные сообщения ${settings?.forwardMessages ? "✅" : "🚫"
+                            }`,
                           callback_data: `forwardMessages`,
                         },
                       ],
                       [
                         {
-                          text: `Тегания пользователей ${
-                            settings?.mentionMessages ? "✅" : "🚫"
-                          }`,
+                          text: `Тегания пользователей ${settings?.mentionMessages ? "✅" : "🚫"
+                            }`,
                           callback_data: `mentionMessages`,
                         },
                       ],
@@ -387,9 +383,8 @@ try {
                       ],
                       [
                         {
-                          text: `Сообщение о подписке ${
-                            settings?.subMessage ? "✅" : "🚫"
-                          }`,
+                          text: `Сообщение о подписке ${settings?.subMessage ? "✅" : "🚫"
+                            }`,
                           callback_data: `subMessage`,
                         },
                       ],
@@ -1083,7 +1078,7 @@ try {
 
       if (findEntity?.type === "mention") {
         if (settings?.mentionMessages) {
-          if (!isMentionUserAdmin){
+          if (!isMentionUserAdmin) {
             bot.deleteMessage(groupId, messageId);
             removeMessage(groupId, messageId);
 
@@ -1363,6 +1358,11 @@ try {
   }
 
   bot.on("edited_message", (msg) => {
+    if(temp.eflood){
+      return
+    }
+
+
     if (msg.new_chat_members || msg.left_chat_member) {
       return;
     }
@@ -1400,6 +1400,11 @@ try {
   })
 
   bot.on("message", (msg) => {
+    if(temp.eflood){
+      return
+    }
+
+
     if (msg.new_chat_members || msg.left_chat_member) {
       return;
     }
@@ -1438,6 +1443,11 @@ try {
 
 
   bot.on("callback_query", (msg) => {
+    if(temp.eflood){
+      return
+    }
+
+
     if (msg.message.chat.type === "private") {
       filterMessages("query", msg);
     } else if (
@@ -1472,4 +1482,21 @@ cron.schedule(
 
 console.log("Bot started!");
 
-// bot.on("polling_error", console.log);
+
+bot.on('polling_error', (error) => {
+  if (error.code === 'EFLOOD' ) {
+    console.log('Превышен лимит запросов к API Telegram.');
+    const retryAfterSeconds = error?.response?.body?.retry_after * 1000;
+
+    temp.eflood = true
+
+    bot.sendMessage(adminChatId, 'Превышен лимит запросов к API Telegram.');
+
+    setTimeout(() => {
+      temp.eflood = false
+    }, retryAfterSeconds);
+
+  } else {
+    console.log('Ошибка во время опроса:', error);
+  }
+});
