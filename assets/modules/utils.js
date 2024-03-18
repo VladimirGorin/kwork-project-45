@@ -12,6 +12,8 @@ const googleSheetsCredentials = require("../data/the-tendril-409714-970a97e08f1c
 const LanguageDetect = require("languagedetect");
 const langDetect = new LanguageDetect();
 
+const containsEmoji = require('contains-emoji');
+
 function sendLogs(
   bot,
   { userName, userId, groupNames, classText, message, options = {} }
@@ -159,7 +161,7 @@ function removeMessage(groupId, messageId) {
   );
 }
 
-function filterReplacingCharacters(text) {
+function filterReplacingCharacters(text, isMentionUserAdmin) {
   // Минимальное количиство символов для проверки
 
   if (text?.length <= 5) {
@@ -173,6 +175,8 @@ function filterReplacingCharacters(text) {
     text.includes(symbol)
   );
 
+  const hasEmoji = containsEmoji(text)
+
   const enRegex = /[a-zA-Z]/;
   const enTest = enRegex.test(text);
 
@@ -183,10 +187,13 @@ function filterReplacingCharacters(text) {
   // Проверка на плохие символы в предложении
 
   if (findForbiddenSymbol) {
-    return {
-      status: true,
-      text: `Есть запрещенный символ ${findForbiddenSymbol}`,
-    };
+    if (!isMentionUserAdmin){
+      return {
+        status: true,
+        text: `Есть запрещенный символ ${findForbiddenSymbol}`,
+      };
+    }
+
   }
 
   const regex = text?.match(
@@ -234,7 +241,11 @@ function filterReplacingCharacters(text) {
 
   // Если не найден язык
   if (!ru && !en && !ua) {
-    return { status: true, text: "Не найден язык" };
+
+    if (!hasEmoji){
+      return { status: true, text: "Не найден язык" };
+    }
+
   }
 
   // Проверка если язык 100% не русский

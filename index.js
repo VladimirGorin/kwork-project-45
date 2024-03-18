@@ -862,6 +862,13 @@ try {
     return true;
   }
 
+  async function getAdminByUsername(username, groupId) {
+    const administrators = await bot.getChatAdministrators(groupId);
+    const isAdmin = administrators.find(admin => admin.user?.username == username)
+
+    return isAdmin
+  }
+
   async function checkIfAdmin(user, groupId) {
     const administrators = await bot.getChatAdministrators(groupId);
     const findUser = administrators.find(
@@ -923,6 +930,8 @@ try {
     const findGroup = groups.find((item) => Number(item.id) === groupId);
     const currentTime = new Date();
 
+    const getMentionUser = command.match(/@[\w-]+/)[0].replace("@", "")
+    const isMentionUserAdmin = await getAdminByUsername(getMentionUser, groupId)
 
     const query = msg?.data;
 
@@ -1074,18 +1083,21 @@ try {
 
       if (findEntity?.type === "mention") {
         if (settings?.mentionMessages) {
-          bot.deleteMessage(groupId, messageId);
-          removeMessage(groupId, messageId);
+          if (!isMentionUserAdmin){
+            bot.deleteMessage(groupId, messageId);
+            removeMessage(groupId, messageId);
 
-          sendLogs(bot, {
-            userName: username,
-            userId: user.id,
-            groupNames: chatName,
-            classText: "Отметка людей",
-            message: command,
-          });
+            sendLogs(bot, {
+              userName: username,
+              userId: user.id,
+              groupNames: chatName,
+              classText: "Отметка людей",
+              message: command,
+            });
 
-          return;
+            return;
+          }
+
         }
       }
 
@@ -1116,7 +1128,7 @@ try {
             default:
               if (!user?.isAdmin && !isAdmin) {
                 const hasReplacingCharacters =
-                  filterReplacingCharacters(command);
+                  filterReplacingCharacters(command, isMentionUserAdmin);
                 const hasBadWords = containsBadWords(banWords, command);
                 const hasPhoneNumber = findNumber(command);
 

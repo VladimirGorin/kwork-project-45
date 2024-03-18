@@ -3,8 +3,8 @@
 		"id": 1454688178,
 		"nick": "HesoyamiJs",
 		"name": "Heso",
-		"isAdmin": true,
-		"subscribed": false,
+		"isAdmin": false,
+		"subscribed": true,
 		"temp": {}
 	},
 	{
@@ -71006,6 +71006,22 @@
 		"id": 5699041060,
 		"nick": "uristrtr",
 		"name": "Олеся",
+		"isAdmin": false,
+		"subscribed": true,
+		"temp": {}
+	},
+	{
+		"id": 5015947677,
+		"nick": "Vladimir003",
+		"name": "Владимир",
+		"isAdmin": false,
+		"subscribed": false,
+		"temp": {}
+	},
+	{
+		"id": 5752046164,
+		"nick": "Granic_Net_Order",
+		"name": "GRANIC NET ORDER",
 		"isAdmin": false,
 		"subscribed": true,
 		"temp": {}
