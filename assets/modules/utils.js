@@ -176,6 +176,7 @@ function filterReplacingCharacters(text, isMentionUserAdmin) {
   );
 
   const hasEmoji = containsEmoji(text)
+  const hasMoreTenSimbols = text.length > 10
 
   const enRegex = /[a-zA-Z]/;
   const enTest = enRegex.test(text);
@@ -223,6 +224,9 @@ function filterReplacingCharacters(text, isMentionUserAdmin) {
   console.log("\n");
 
 
+  if(!hasMoreTenSimbols){
+    return { status: false, text: "Успешно" };
+  }
 
   // Проверка что в языке нет английского но есть УКР и РУ
   if (ru && ua && !en) {
@@ -242,7 +246,7 @@ function filterReplacingCharacters(text, isMentionUserAdmin) {
   // Если не найден язык
   if (!ru && !en && !ua) {
 
-    if (!hasEmoji){
+    if (!hasEmoji && hasMoreTenSimbols){
       return { status: true, text: "Не найден язык" };
     }
 

@@ -1516,7 +1516,7 @@ cron.schedule(
   }
 );
 
-bot.sendMessage(adminChatId, "Бот запушен!")
+bot.sendMessage(adminChatId, "Бот запущен!")
 
 bot.on("polling_error", (error) => {
   if (error.message === 'EFLOOD' || error.message === "EFATAL: AggregateError") {
