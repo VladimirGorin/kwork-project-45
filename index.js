@@ -1,7 +1,7 @@
 require("dotenv").config({ path: "./assets/.env" });
 const winston = require("winston");
 const { combine, timestamp, printf } = winston.format;
-const { exec } = require('child_process');
+const { exec } = require("child_process");
 
 const cron = require("node-cron");
 
@@ -14,7 +14,8 @@ const adminChatId = Number(
 let temp = {
   groups: [],
   handleFunction: null,
-  eflood: false
+  eflood: false,
+  timeout: 2000,
 };
 
 const googleSheetsCredentials = require("./assets/data/the-tendril-409714-970a97e08f1c.json");
@@ -272,13 +273,12 @@ try {
           switch (command) {
             case "/stop":
               if (testMode) {
-
-                bot.sendMessage(user.id, "Успешно остоновлено")
+                bot.sendMessage(user.id, "Успешно остоновлено");
                 exec(`pm2 stop test`, (error, stdout, stderr) => {
                   console.log(`Приложение успешно остановлено: ${stdout}`);
                 });
               }
-              break
+              break;
 
             case "/start":
               const admins = users.filter((item) => item.isAdmin === true);
@@ -317,37 +317,42 @@ try {
                           callback_data: `urlMessages`,
                         },
                         {
-                          text: `Рассылка ${settings?.newsletter ? "✅" : "🚫"
-                            }`,
+                          text: `Рассылка ${
+                            settings?.newsletter ? "✅" : "🚫"
+                          }`,
                           callback_data: `newsletter`,
                         },
                       ],
                       [
                         {
-                          text: `Скрытые сообщения ${settings?.spoilerMessages ? "✅" : "🚫"
-                            }`,
+                          text: `Скрытые сообщения ${
+                            settings?.spoilerMessages ? "✅" : "🚫"
+                          }`,
                           callback_data: `spoilerMessages`,
                         },
                       ],
                       [
                         {
-                          text: `Номера телефонов ${settings?.phoneMessages ? "✅" : "🚫"
-                            }`,
+                          text: `Номера телефонов ${
+                            settings?.phoneMessages ? "✅" : "🚫"
+                          }`,
                           callback_data: `phoneMessages`,
                         },
                       ],
 
                       [
                         {
-                          text: `Пересланные сообщения ${settings?.forwardMessages ? "✅" : "🚫"
-                            }`,
+                          text: `Пересланные сообщения ${
+                            settings?.forwardMessages ? "✅" : "🚫"
+                          }`,
                           callback_data: `forwardMessages`,
                         },
                       ],
                       [
                         {
-                          text: `Тегания пользователей ${settings?.mentionMessages ? "✅" : "🚫"
-                            }`,
+                          text: `Тегания пользователей ${
+                            settings?.mentionMessages ? "✅" : "🚫"
+                          }`,
                           callback_data: `mentionMessages`,
                         },
                       ],
@@ -383,8 +388,9 @@ try {
                       ],
                       [
                         {
-                          text: `Сообщение о подписке ${settings?.subMessage ? "✅" : "🚫"
-                            }`,
+                          text: `Сообщение о подписке ${
+                            settings?.subMessage ? "✅" : "🚫"
+                          }`,
                           callback_data: `subMessage`,
                         },
                       ],
@@ -858,23 +864,39 @@ try {
   }
 
   async function getAdminByUsername(username, groupId) {
-    const administrators = await bot.getChatAdministrators(groupId);
-    const isAdmin = administrators.find(admin => admin.user?.username == username)
+    try {
+      const administrators = await bot.getChatAdministrators(groupId);
+      const isAdmin = administrators.find(
+        (admin) => admin.user?.username == username
+      );
 
-    return isAdmin
+      return isAdmin;
+    } catch (error) {
+      bot.sendMessage(
+        adminChatId,
+        "Ошибка при попытке проверки администратора"
+      );
+    }
   }
 
   async function checkIfAdmin(user, groupId) {
-    const administrators = await bot.getChatAdministrators(groupId);
-    const findUser = administrators.find(
-      (admin) => admin?.user?.id === user?.id
-    );
+    try {
+      const administrators = await bot.getChatAdministrators(groupId);
+      const findUser = administrators.find(
+        (admin) => admin?.user?.id === user?.id
+      );
 
-    if (findUser) {
-      return true;
+      if (findUser) {
+        return true;
+      }
+
+      return false;
+    } catch (error) {
+      bot.sendMessage(
+        adminChatId,
+        "Ошибка при попытке проверки администратора"
+      );
     }
-
-    return false;
   }
 
   async function filterGroup(messageType, msg) {
@@ -925,8 +947,11 @@ try {
     const findGroup = groups.find((item) => Number(item.id) === groupId);
     const currentTime = new Date();
 
-    const getMentionUser = command.match(/@[\w-]+/)?.[0]?.replace("@", "")
-    const isMentionUserAdmin = await getAdminByUsername(getMentionUser, groupId)
+    const getMentionUser = command?.match(/@[\w-]+/)?.[0]?.replace("@", "");
+    const isMentionUserAdmin = await getAdminByUsername(
+      getMentionUser,
+      groupId
+    );
 
     const query = msg?.data;
 
@@ -984,8 +1009,6 @@ try {
       }
     }
 
-
-
     if (findGroup) {
       if (command) {
         if (user?.subscribed) {
@@ -1003,9 +1026,19 @@ try {
     }
 
     // const banEntities = ["custom_emoji", "pre", "url", "text_mention", "code", "text_link", "spoiler", "mention"]
-    const banEntities = ["pre", "url", "text_mention", "code", "text_link", "spoiler", "mention"]
+    const banEntities = [
+      "pre",
+      "url",
+      "text_mention",
+      "code",
+      "text_link",
+      "spoiler",
+      "mention",
+    ];
 
-    const findEntity = entities?.find(entity => banEntities?.includes(entity?.type));
+    const findEntity = entities?.find((entity) =>
+      banEntities?.includes(entity?.type)
+    );
 
     if (!user?.isAdmin && !isAdmin) {
       // if (findEntity?.type === "custom_emoji") {
@@ -1025,7 +1058,11 @@ try {
       //   }
       // }
 
-      if (findEntity?.type === "url" || findEntity?.type === "text_mention" || findEntity?.type === "code") {
+      if (
+        findEntity?.type === "url" ||
+        findEntity?.type === "text_mention" ||
+        findEntity?.type === "code"
+      ) {
         if (settings?.urlMessages) {
           bot.deleteMessage(groupId, messageId);
           removeMessage(groupId, messageId);
@@ -1092,7 +1129,6 @@ try {
 
             return;
           }
-
         }
       }
 
@@ -1114,20 +1150,20 @@ try {
       }
     }
 
-
-
     if (user?.subscribed) {
       if (messageType === "message") {
         if (command) {
           switch (command) {
             default:
               if (!user?.isAdmin && !isAdmin) {
-                const hasReplacingCharacters =
-                  filterReplacingCharacters(command, isMentionUserAdmin);
+                const hasReplacingCharacters = filterReplacingCharacters(
+                  command,
+                  isMentionUserAdmin
+                );
                 const hasBadWords = containsBadWords(banWords, command);
                 const hasPhoneNumber = findNumber(command);
 
-                console.log(hasReplacingCharacters)
+                console.log(hasReplacingCharacters);
 
                 if (hasPhoneNumber?.status && settings?.phoneMessages) {
                   bot.deleteMessage(groupId, messageId);
@@ -1155,8 +1191,8 @@ try {
                     classText: "Спам база",
                     message: command,
                     options: {
-                      banWord: hasBadWords
-                    }
+                      banWord: hasBadWords,
+                    },
                   });
 
                   return;
@@ -1214,7 +1250,7 @@ try {
                           message: command,
                           options: {
                             messageId: item?.messageId,
-                          }
+                          },
                         });
 
                         spamMessages.push({
@@ -1311,10 +1347,8 @@ try {
 
         if (!findTempGroupData) {
           temp.groups.push({ id: groupId, subMessageSended: false });
-          findTempGroupData = { id: groupId, subMessageSended: false }
+          findTempGroupData = { id: groupId, subMessageSended: false };
         }
-
-
 
         const subChannelsKeyboard = settings?.subChannels.map((item) => [
           {
@@ -1358,104 +1392,106 @@ try {
   }
 
   bot.on("edited_message", (msg) => {
-    if(temp.eflood){
-      return
-    }
-
-
-    if (msg.new_chat_members || msg.left_chat_member) {
+    if (temp.eflood) {
       return;
     }
 
-    const chatId = msg.from.id;
-    const getUsers = JSON.parse(fs.readFileSync("./assets/data/users.json"));
-    let user = getUsers.filter((x) => x.id === chatId)[0];
+    setTimeout(() => {
+      if (msg.new_chat_members || msg.left_chat_member) {
+        return;
+      }
 
-    if (!user) {
-      console.log(chatId, adminChatId);
-      const admin = chatId === adminChatId;
-      const groupAnonymousBot = msg?.from?.username === "GroupAnonymousBot";
+      const chatId = msg.from.id;
+      const getUsers = JSON.parse(fs.readFileSync("./assets/data/users.json"));
+      let user = getUsers.filter((x) => x.id === chatId)[0];
 
-      getUsers.push({
-        id: msg.from.id,
-        nick: msg.from.username,
-        name: msg.from.first_name,
-        isAdmin: admin ? true : false || groupAnonymousBot ? true : false,
-        subscribed: groupAnonymousBot ? true : false,
-        temp: {},
-      });
+      if (!user) {
+        console.log(chatId, adminChatId);
+        const admin = chatId === adminChatId;
+        const groupAnonymousBot = msg?.from?.username === "GroupAnonymousBot";
 
-      user = getUsers.filter((x) => x.id === msg.from.id)[0];
-      fs.writeFileSync(
-        "./assets/data/users.json",
-        JSON.stringify(getUsers, null, "\t")
-      );
-    }
+        getUsers.push({
+          id: msg.from.id,
+          nick: msg.from.username,
+          name: msg.from.first_name,
+          isAdmin: admin ? true : false || groupAnonymousBot ? true : false,
+          subscribed: groupAnonymousBot ? true : false,
+          temp: {},
+        });
 
-    if (msg.chat.type === "private") {
-      filterMessages("message", msg);
-    } else if (msg.chat.type === "supergroup" || msg.chat.type === "group") {
-      filterGroup("message", msg);
-    }
-  })
+        user = getUsers.filter((x) => x.id === msg.from.id)[0];
+        fs.writeFileSync(
+          "./assets/data/users.json",
+          JSON.stringify(getUsers, null, "\t")
+        );
+      }
 
-  bot.on("message", (msg) => {
-    if(temp.eflood){
-      return
-    }
-
-
-    if (msg.new_chat_members || msg.left_chat_member) {
-      return;
-    }
-
-    const chatId = msg.from.id;
-    const getUsers = JSON.parse(fs.readFileSync("./assets/data/users.json"));
-    let user = getUsers.filter((x) => x.id === chatId)[0];
-
-    if (!user) {
-      console.log(chatId, adminChatId);
-      const admin = chatId === adminChatId;
-      const groupAnonymousBot = msg?.from?.username === "GroupAnonymousBot";
-
-      getUsers.push({
-        id: msg.from.id,
-        nick: msg.from.username,
-        name: msg.from.first_name,
-        isAdmin: admin ? true : false || groupAnonymousBot ? true : false,
-        subscribed: groupAnonymousBot ? true : false,
-        temp: {},
-      });
-
-      user = getUsers.filter((x) => x.id === msg.from.id)[0];
-      fs.writeFileSync(
-        "./assets/data/users.json",
-        JSON.stringify(getUsers, null, "\t")
-      );
-    }
-
-    if (msg.chat.type === "private") {
-      filterMessages("message", msg);
-    } else if (msg.chat.type === "supergroup" || msg.chat.type === "group") {
-      filterGroup("message", msg);
-    }
+      if (msg.chat.type === "private") {
+        filterMessages("message", msg);
+      } else if (msg.chat.type === "supergroup" || msg.chat.type === "group") {
+        filterGroup("message", msg);
+      }
+    }, temp.timeout);
   });
 
+  bot.on("message", (msg) => {
+    if (temp.eflood) {
+      return;
+    }
+
+    setTimeout(() => {
+      if (msg.new_chat_members || msg.left_chat_member) {
+        return;
+      }
+
+      const chatId = msg.from.id;
+      const getUsers = JSON.parse(fs.readFileSync("./assets/data/users.json"));
+      let user = getUsers.filter((x) => x.id === chatId)[0];
+
+      if (!user) {
+        console.log(chatId, adminChatId);
+        const admin = chatId === adminChatId;
+        const groupAnonymousBot = msg?.from?.username === "GroupAnonymousBot";
+
+        getUsers.push({
+          id: msg.from.id,
+          nick: msg.from.username,
+          name: msg.from.first_name,
+          isAdmin: admin ? true : false || groupAnonymousBot ? true : false,
+          subscribed: groupAnonymousBot ? true : false,
+          temp: {},
+        });
+
+        user = getUsers.filter((x) => x.id === msg.from.id)[0];
+        fs.writeFileSync(
+          "./assets/data/users.json",
+          JSON.stringify(getUsers, null, "\t")
+        );
+      }
+
+      if (msg.chat.type === "private") {
+        filterMessages("message", msg);
+      } else if (msg.chat.type === "supergroup" || msg.chat.type === "group") {
+        filterGroup("message", msg);
+      }
+    }, temp.timeout);
+  });
 
   bot.on("callback_query", (msg) => {
-    if(temp.eflood){
-      return
+    if (temp.eflood) {
+      return;
     }
 
-
-    if (msg.message.chat.type === "private") {
-      filterMessages("query", msg);
-    } else if (
-      msg.message.chat.type === "supergroup" ||
-      msg.message.chat.type === "group"
-    ) {
-      filterGroup("query", msg);
-    }
+    setTimeout(() => {
+      if (msg.message.chat.type === "private") {
+        filterMessages("query", msg);
+      } else if (
+        msg.message.chat.type === "supergroup" ||
+        msg.message.chat.type === "group"
+      ) {
+        filterGroup("query", msg);
+      }
+    }, temp.timeout);
   });
 
   setInterval(() => {
@@ -1480,23 +1516,14 @@ cron.schedule(
   }
 );
 
-console.log("Bot started!");
+bot.sendMessage(adminChatId, "Бот запушен!")
 
-
-bot.on('polling_error', (error) => {
-  if (error.code === 'EFLOOD' ) {
+bot.on("polling_error", (error) => {
+  if (error.message === 'EFLOOD' || error.message === "EFATAL: AggregateError") {
     console.log('Превышен лимит запросов к API Telegram.');
-    const retryAfterSeconds = error?.response?.body?.retry_after * 1000;
-
-    temp.eflood = true
-
-    bot.sendMessage(adminChatId, 'Превышен лимит запросов к API Telegram.');
-
-    setTimeout(() => {
-      temp.eflood = false
-    }, retryAfterSeconds);
-
-  } else {
-    console.log('Ошибка во время опроса:', error);
+    bot.sendMessage(adminChatId, 'Превышен лимит запросов к API Telegram перезагружаем.');
+    exec(`pm2 restart server`, (error, stdout, stderr) => {
+      console.log(`Приложение успешно остановлено: ${stdout}`);
+    });
   }
 });
